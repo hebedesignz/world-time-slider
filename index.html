@@ -3,18 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Timezone Slider</title>
+<title>World Time</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F1ECE7;           /* warm taupe — vintagize UI background */
-    --paper: #EDE6DF;        /* warm cream — machine face panels */
-    --paper-dark: #EDE6DF;   /* darker panel — slider/header sections */
-    --ink: #282420;          /* deep charcoal — body trim and text */
-    --accent: #c84e1a;       /* orange-rust — the amp top / record button */
-    --amber: #d49010;        /* warm amber — indicator lights */
-    --rule: #a09484;         /* muted warm grey — dividers */
-    --slate: #4a6878;        /* slate teal — reel machine top panel */
+    --bg:         #F1ECE7;
+    --paper:      #EDE6DF;
+    --paper-dark: #EDE6DF;
+    --ink:        #282420;
+    --accent:     #c84e1a;
+    --rule:       #a09484;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,6 +27,7 @@
     padding: 24px;
   }
 
+  /* ── Card ── */
   .device {
     background: #EDE6DF;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
@@ -47,10 +46,10 @@
     gap: 8px;
   }
 
-  
+  /* ── Header ── */
   .device-top {
     background: transparent;
-    padding: 4px 4px 4px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -63,6 +62,7 @@
     color: #B63938;
   }
 
+  /* ── Tape area ── */
   .tape-area {
     position: relative;
     overflow: hidden;
@@ -71,7 +71,6 @@
     margin-top: 10px;
   }
 
-  /* Selection box overlay */
   .sel-box {
     position: absolute;
     top: 0;
@@ -103,7 +102,6 @@
     color: var(--ink);
     letter-spacing: 0.5px;
     font-weight: 500;
-    border-right: none;
     z-index: 2;
     background: var(--paper);
   }
@@ -133,6 +131,7 @@
     will-change: transform;
   }
 
+  /* ── Hour cells ── */
   .hour-cell {
     width: 48px;
     min-width: 48px;
@@ -165,8 +164,13 @@
     transition: color 0.1s;
   }
 
-  .hour-cell.is-current .hour-num {
-    color: var(--accent);
+  .hour-cell.is-current .hour-num { color: var(--accent); }
+
+  .hour-ampm {
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: 0.55;
+    margin-top: 1px;
   }
 
   .day-marker {
@@ -177,46 +181,16 @@
     letter-spacing: 0;
     line-height: 1;
     margin-left: 1px;
-    opacity: 1;
   }
 
-  .hour-ampm {
-    font-size: 10px;
-    letter-spacing: 1px;
-    opacity: 0.55;
-    margin-top: 1px;
-  }
+  .hour-cell.is-work                   { background: rgba(40, 88, 160, 0.10); }
+  .hour-cell.is-work .hour-num         { color: #2858a0; opacity: 0.9; }
+  .hour-cell.is-work.is-current .hour-num { color: var(--accent); opacity: 1; }
 
-  .hour-cell.is-work {
-    background: rgba(40, 88, 160, 0.10);
-  }
-
-  .hour-cell.is-work .hour-num {
-    color: #2858a0;
-    opacity: 0.9;
-  }
-
-  .hour-cell.is-work.is-current .hour-num {
-    color: var(--accent);
-    opacity: 1;
-  }
-
-  .tape-fade-left, .tape-fade-right {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 30px;
-    z-index: 5;
-    pointer-events: none;
-  }
-  .tape-fade-left { left: 120px; background: #B63938, transparent); }
-  .tape-fade-right { right: 0; background: #B63938, transparent); }
-
-
-  /* Slider section */
+  /* ── Slider ── */
   .slider-section {
     background: var(--paper-dark);
     padding: 10px 20px 14px;
-    border-top: none;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -239,7 +213,9 @@
     position: relative;
   }
 
-  /* Tick marks — one per hour step */
+  /* Tick marks — background-position-x shifts the pattern so a tick
+     lands exactly at 50% (the NOW center). calc(50% + 0.5px) accounts
+     for the 1px tick width so its visual center sits on the midpoint. */
   .slider-rule::after {
     content: '';
     position: absolute;
@@ -255,6 +231,7 @@
       transparent 48px
     );
     background-size: 48px 100%;
+    background-position-x: calc(50% + 0.5px);
     opacity: 0.5;
     pointer-events: none;
   }
@@ -334,6 +311,7 @@
     transform: translateX(-50%);
   }
 
+  /* ── Add Timezone button ── */
   .add-btn {
     display: flex;
     align-items: center;
@@ -351,20 +329,18 @@
     transition: opacity 0.15s;
   }
 
-  .add-btn:hover { opacity: 1; }acity 0.15s;
-  }
+  .add-btn:hover { opacity: 1; }
+  .add-btn svg { width: 8px; height: 8px; }
 
-    .add-btn svg { width: 8px; height: 8px; }
-
+  /* ── Time badge ── */
   .selected-time-badge {
-    margin-left: auto;
     font-family: 'Bebas Neue', cursive;
     font-size: 22px;
     color: var(--accent);
     letter-spacing: 2px;
   }
 
-  /* Modal */
+  /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -386,10 +362,6 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     display: flex;
     flex-direction: column;
-  }
-
-  .tz-search-wrap {
-    flex: 1;
   }
 
   .modal h3 {
@@ -418,9 +390,7 @@
     outline: none;
   }
 
-  .tz-search-input:focus {
-    border-color: var(--ink);
-  }
+  .tz-search-input:focus { border-color: var(--ink); }
 
   .tz-dropdown {
     position: fixed;
@@ -452,32 +422,10 @@
   }
 
   .tz-option:last-child { border-bottom: none; }
-  .tz-option:hover, .tz-option.selected { background: #c4bdb0; }
+  .tz-option:hover  { background: #c4bdb0; }
   .tz-option.active { background: var(--ink); color: var(--paper); }
 
-  .modal-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
-  .modal-actions button {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 7px 16px;
-    border-radius: 2px;
-    cursor: pointer;
-    border: 1px solid var(--rule);
-    background: none;
-  }
-
-  .modal-actions .confirm-btn {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-  }
-
+  /* ── Delete button ── */
   .tz-label-wrap {
     position: relative;
     display: flex;
@@ -500,6 +448,10 @@
     color: var(--accent);
   }
 
+  .timezone-row:hover .del-btn { display: block; }
+  .del-btn:hover { opacity: 1; }
+
+  /* ── Accessibility ── */
   .sr-only {
     position: absolute;
     width: 1px; height: 1px;
@@ -509,9 +461,6 @@
     white-space: nowrap;
     border: 0;
   }
-
-  .timezone-row:hover .del-btn { display: block; }
-  .del-btn:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -523,8 +472,6 @@
 
   <div class="tape-area" id="tapeArea">
     <div id="rowsContainer"></div>
-    <div class="tape-fade-left"></div>
-    <div class="tape-fade-right"></div>
     <div class="sel-box" id="selBox"></div>
   </div>
 
@@ -540,10 +487,14 @@
     </div>
     <div class="slider-track-wrap">
       <div class="slider-rule" aria-hidden="true"></div>
-      <input type="range" id="mainSlider" min="0" max="46" step="1" value="23" aria-label="Time offset — drag left for earlier, right for later" aria-valuetext="Now">
+      <input type="range" id="mainSlider" min="0" max="46" step="1" value="23"
+        aria-label="Time offset — drag left for earlier, right for later"
+        aria-valuetext="Now">
     </div>
     <div class="slider-labels" aria-hidden="true">
-      <span>← EARLIER</span><span class="now-label">NOW</span><span>LATER →</span>
+      <span>← EARLIER</span>
+      <span class="now-label">NOW</span>
+      <span>LATER →</span>
     </div>
   </div>
 </div>
@@ -553,23 +504,23 @@
     <h3 id="modalTitle">Add Timezone</h3>
     <div class="tz-search-wrap">
       <label for="tzSearch" class="sr-only">Search timezones</label>
-      <input type="text" id="tzSearch" class="tz-search-input" placeholder="Search timezones..." autocomplete="off" spellcheck="false" aria-autocomplete="list" aria-controls="tzDropdown" aria-expanded="false">
+      <input type="text" id="tzSearch" class="tz-search-input"
+        placeholder="Search timezones..."
+        autocomplete="off" spellcheck="false"
+        aria-autocomplete="list" aria-controls="tzDropdown" aria-expanded="false">
       <div class="tz-dropdown" id="tzDropdown" role="listbox" aria-label="Timezone options"></div>
     </div>
   </div>
 </div>
 
 <script>
+// ── Audio ──
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx;
 
 function initAudio() {
-  if (!audioCtx) {
-    audioCtx = new AudioCtx();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
+  if (!audioCtx) audioCtx = new AudioCtx();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
 }
 
 function playClick() {
@@ -591,95 +542,97 @@ function playClick() {
   } catch(e) {}
 }
 
+// ── Timezone data ──
 const TZ_OPTIONS = [
-  // ── United States ──
-  { label: 'Eastern (ET)',          tz: 'America/New_York',       short: 'ET'   },
-  { label: 'Central (CT)',          tz: 'America/Chicago',        short: 'CT'   },
-  { label: 'Mountain (MT)',         tz: 'America/Denver',         short: 'MT'   },
-  { label: 'Pacific (PT)',          tz: 'America/Los_Angeles',    short: 'PT'   },
-  { label: 'Alaska (AKT)',          tz: 'America/Anchorage',      short: 'AKT'  },
-  { label: 'Hawaii (HST)',          tz: 'Pacific/Honolulu',       short: 'HST'  },
-  // ── Canada ──
-  { label: 'Toronto (ET)',          tz: 'America/Toronto',        short: 'ET'   },
-  { label: 'Vancouver (PT)',        tz: 'America/Vancouver',      short: 'PT'   },
-  { label: 'Montreal (ET)',         tz: 'America/Toronto',        short: 'ET'   },
-  // ── Latin America ──
-  { label: 'Mexico City (CST)',     tz: 'America/Mexico_City',    short: 'CST'  },
-  { label: 'São Paulo (BRT)',       tz: 'America/Sao_Paulo',      short: 'BRT'  },
-  { label: 'Buenos Aires (ART)',    tz: 'America/Argentina/Buenos_Aires', short: 'ART' },
-  { label: 'Bogotá (COT)',          tz: 'America/Bogota',         short: 'COT'  },
-  { label: 'Lima (PET)',            tz: 'America/Lima',           short: 'PET'  },
-  { label: 'Santiago (CLT)',        tz: 'America/Santiago',       short: 'CLT'  },
-  // ── Europe ──
-  { label: 'London (GMT)',          tz: 'Europe/London',          short: 'GMT'  },
-  { label: 'Lisbon (WET)',          tz: 'Europe/Lisbon',          short: 'WET'  },
-  { label: 'Dublin (GMT)',          tz: 'Europe/Dublin',          short: 'GMT'  },
-  { label: 'Paris (CET)',           tz: 'Europe/Paris',           short: 'CET'  },
-  { label: 'Amsterdam (CET)',       tz: 'Europe/Amsterdam',       short: 'CET'  },
-  { label: 'Berlin (CET)',          tz: 'Europe/Berlin',          short: 'CET'  },
-  { label: 'Frankfurt (CET)',       tz: 'Europe/Berlin',          short: 'CET'  },
-  { label: 'Brussels (CET)',        tz: 'Europe/Brussels',        short: 'CET'  },
-  { label: 'Zurich (CET)',          tz: 'Europe/Zurich',          short: 'CET'  },
-  { label: 'Milan (CET)',           tz: 'Europe/Rome',            short: 'CET'  },
-  { label: 'Rome (CET)',            tz: 'Europe/Rome',            short: 'CET'  },
-  { label: 'Madrid (CET)',          tz: 'Europe/Madrid',          short: 'CET'  },
-  { label: 'Stockholm (CET)',       tz: 'Europe/Stockholm',       short: 'CET'  },
-  { label: 'Copenhagen (CET)',      tz: 'Europe/Copenhagen',      short: 'CET'  },
-  { label: 'Oslo (CET)',            tz: 'Europe/Oslo',            short: 'CET'  },
-  { label: 'Helsinki (EET)',        tz: 'Europe/Helsinki',        short: 'EET'  },
-  { label: 'Warsaw (CET)',          tz: 'Europe/Warsaw',          short: 'CET'  },
-  { label: 'Vienna (CET)',          tz: 'Europe/Vienna',          short: 'CET'  },
-  { label: 'Athens (EET)',          tz: 'Europe/Athens',          short: 'EET'  },
-  { label: 'Istanbul (TRT)',        tz: 'Europe/Istanbul',        short: 'TRT'  },
-  { label: 'Moscow (MSK)',          tz: 'Europe/Moscow',          short: 'MSK'  },
-  // ── Middle East & Africa ──
-  { label: 'Riyadh (AST)',          tz: 'Asia/Riyadh',            short: 'AST'  },
-  { label: 'Dubai (GST)',           tz: 'Asia/Dubai',             short: 'GST'  },
-  { label: 'Abu Dhabi (GST)',       tz: 'Asia/Dubai',             short: 'GST'  },
-  { label: 'Doha (AST)',            tz: 'Asia/Qatar',             short: 'AST'  },
-  { label: 'Tel Aviv (IST)',        tz: 'Asia/Jerusalem',         short: 'IST'  },
-  { label: 'Cairo (EET)',           tz: 'Africa/Cairo',           short: 'EET'  },
-  { label: 'Lagos (WAT)',           tz: 'Africa/Lagos',           short: 'WAT'  },
-  { label: 'Nairobi (EAT)',         tz: 'Africa/Nairobi',         short: 'EAT'  },
-  { label: 'Johannesburg (SAST)',   tz: 'Africa/Johannesburg',    short: 'SAST' },
-  // ── Asia Pacific ──
-  { label: 'Karachi (PKT)',         tz: 'Asia/Karachi',           short: 'PKT'  },
-  { label: 'Mumbai (IST)',          tz: 'Asia/Kolkata',           short: 'IST'  },
-  { label: 'Delhi (IST)',           tz: 'Asia/Kolkata',           short: 'IST'  },
-  { label: 'Bangalore (IST)',       tz: 'Asia/Kolkata',           short: 'IST'  },
-  { label: 'Colombo (SLST)',        tz: 'Asia/Colombo',           short: 'SLST' },
-  { label: 'Dhaka (BST)',           tz: 'Asia/Dhaka',             short: 'BST'  },
-  { label: 'Bangkok (ICT)',         tz: 'Asia/Bangkok',           short: 'ICT'  },
-  { label: 'Ho Chi Minh (ICT)',     tz: 'Asia/Ho_Chi_Minh',       short: 'ICT'  },
-  { label: 'Jakarta (WIB)',         tz: 'Asia/Jakarta',           short: 'WIB'  },
-  { label: 'Kuala Lumpur (MYT)',    tz: 'Asia/Kuala_Lumpur',      short: 'MYT'  },
-  { label: 'Singapore (SGT)',       tz: 'Asia/Singapore',         short: 'SGT'  },
-  { label: 'Manila (PHT)',          tz: 'Asia/Manila',            short: 'PHT'  },
-  { label: 'Hong Kong (HKT)',       tz: 'Asia/Hong_Kong',         short: 'HKT'  },
-  { label: 'Shanghai (CST)',        tz: 'Asia/Shanghai',          short: 'CST'  },
-  { label: 'Beijing (CST)',         tz: 'Asia/Shanghai',          short: 'CST'  },
-  { label: 'Shenzhen (CST)',        tz: 'Asia/Shanghai',          short: 'CST'  },
-  { label: 'Taipei (CST)',          tz: 'Asia/Taipei',            short: 'CST'  },
-  { label: 'Seoul (KST)',           tz: 'Asia/Seoul',             short: 'KST'  },
-  { label: 'Tokyo (JST)',           tz: 'Asia/Tokyo',             short: 'JST'  },
-  { label: 'Osaka (JST)',           tz: 'Asia/Tokyo',             short: 'JST'  },
-  // ── Oceania ──
-  { label: 'Sydney (AEST)',         tz: 'Australia/Sydney',       short: 'AEST' },
-  { label: 'Melbourne (AEST)',      tz: 'Australia/Melbourne',    short: 'AEST' },
-  { label: 'Brisbane (AEST)',       tz: 'Australia/Brisbane',     short: 'AEST' },
-  { label: 'Perth (AWST)',          tz: 'Australia/Perth',        short: 'AWST' },
-  { label: 'Auckland (NZST)',       tz: 'Pacific/Auckland',       short: 'NZST' },
+  // United States
+  { label: 'Eastern (ET)',          tz: 'America/New_York',               short: 'ET'   },
+  { label: 'Central (CT)',          tz: 'America/Chicago',                short: 'CT'   },
+  { label: 'Mountain (MT)',         tz: 'America/Denver',                 short: 'MT'   },
+  { label: 'Pacific (PT)',          tz: 'America/Los_Angeles',            short: 'PT'   },
+  { label: 'Alaska (AKT)',          tz: 'America/Anchorage',              short: 'AKT'  },
+  { label: 'Hawaii (HST)',          tz: 'Pacific/Honolulu',               short: 'HST'  },
+  // Canada
+  { label: 'Toronto (ET)',          tz: 'America/Toronto',                short: 'ET'   },
+  { label: 'Vancouver (PT)',        tz: 'America/Vancouver',              short: 'PT'   },
+  { label: 'Montreal (ET)',         tz: 'America/Toronto',                short: 'ET'   },
+  // Latin America
+  { label: 'Mexico City (CST)',     tz: 'America/Mexico_City',            short: 'CST'  },
+  { label: 'São Paulo (BRT)',       tz: 'America/Sao_Paulo',              short: 'BRT'  },
+  { label: 'Buenos Aires (ART)',    tz: 'America/Argentina/Buenos_Aires', short: 'ART'  },
+  { label: 'Bogotá (COT)',          tz: 'America/Bogota',                 short: 'COT'  },
+  { label: 'Lima (PET)',            tz: 'America/Lima',                   short: 'PET'  },
+  { label: 'Santiago (CLT)',        tz: 'America/Santiago',               short: 'CLT'  },
+  // Europe
+  { label: 'London (GMT)',          tz: 'Europe/London',                  short: 'GMT'  },
+  { label: 'Lisbon (WET)',          tz: 'Europe/Lisbon',                  short: 'WET'  },
+  { label: 'Dublin (GMT)',          tz: 'Europe/Dublin',                  short: 'GMT'  },
+  { label: 'Paris (CET)',           tz: 'Europe/Paris',                   short: 'CET'  },
+  { label: 'Amsterdam (CET)',       tz: 'Europe/Amsterdam',               short: 'CET'  },
+  { label: 'Berlin (CET)',          tz: 'Europe/Berlin',                  short: 'CET'  },
+  { label: 'Frankfurt (CET)',       tz: 'Europe/Berlin',                  short: 'CET'  },
+  { label: 'Brussels (CET)',        tz: 'Europe/Brussels',                short: 'CET'  },
+  { label: 'Zurich (CET)',          tz: 'Europe/Zurich',                  short: 'CET'  },
+  { label: 'Milan (CET)',           tz: 'Europe/Rome',                    short: 'CET'  },
+  { label: 'Rome (CET)',            tz: 'Europe/Rome',                    short: 'CET'  },
+  { label: 'Madrid (CET)',          tz: 'Europe/Madrid',                  short: 'CET'  },
+  { label: 'Stockholm (CET)',       tz: 'Europe/Stockholm',               short: 'CET'  },
+  { label: 'Copenhagen (CET)',      tz: 'Europe/Copenhagen',              short: 'CET'  },
+  { label: 'Oslo (CET)',            tz: 'Europe/Oslo',                    short: 'CET'  },
+  { label: 'Helsinki (EET)',        tz: 'Europe/Helsinki',                short: 'EET'  },
+  { label: 'Warsaw (CET)',          tz: 'Europe/Warsaw',                  short: 'CET'  },
+  { label: 'Vienna (CET)',          tz: 'Europe/Vienna',                  short: 'CET'  },
+  { label: 'Athens (EET)',          tz: 'Europe/Athens',                  short: 'EET'  },
+  { label: 'Istanbul (TRT)',        tz: 'Europe/Istanbul',                short: 'TRT'  },
+  { label: 'Moscow (MSK)',          tz: 'Europe/Moscow',                  short: 'MSK'  },
+  // Middle East & Africa
+  { label: 'Riyadh (AST)',          tz: 'Asia/Riyadh',                    short: 'AST'  },
+  { label: 'Dubai (GST)',           tz: 'Asia/Dubai',                     short: 'GST'  },
+  { label: 'Abu Dhabi (GST)',       tz: 'Asia/Dubai',                     short: 'GST'  },
+  { label: 'Doha (AST)',            tz: 'Asia/Qatar',                     short: 'AST'  },
+  { label: 'Tel Aviv (IST)',        tz: 'Asia/Jerusalem',                 short: 'IST'  },
+  { label: 'Cairo (EET)',           tz: 'Africa/Cairo',                   short: 'EET'  },
+  { label: 'Lagos (WAT)',           tz: 'Africa/Lagos',                   short: 'WAT'  },
+  { label: 'Nairobi (EAT)',         tz: 'Africa/Nairobi',                 short: 'EAT'  },
+  { label: 'Johannesburg (SAST)',   tz: 'Africa/Johannesburg',            short: 'SAST' },
+  // Asia Pacific
+  { label: 'Karachi (PKT)',         tz: 'Asia/Karachi',                   short: 'PKT'  },
+  { label: 'Mumbai (IST)',          tz: 'Asia/Kolkata',                   short: 'IST'  },
+  { label: 'Delhi (IST)',           tz: 'Asia/Kolkata',                   short: 'IST'  },
+  { label: 'Bangalore (IST)',       tz: 'Asia/Kolkata',                   short: 'IST'  },
+  { label: 'Colombo (SLST)',        tz: 'Asia/Colombo',                   short: 'SLST' },
+  { label: 'Dhaka (BST)',           tz: 'Asia/Dhaka',                     short: 'BST'  },
+  { label: 'Bangkok (ICT)',         tz: 'Asia/Bangkok',                   short: 'ICT'  },
+  { label: 'Ho Chi Minh (ICT)',     tz: 'Asia/Ho_Chi_Minh',               short: 'ICT'  },
+  { label: 'Jakarta (WIB)',         tz: 'Asia/Jakarta',                   short: 'WIB'  },
+  { label: 'Kuala Lumpur (MYT)',    tz: 'Asia/Kuala_Lumpur',              short: 'MYT'  },
+  { label: 'Singapore (SGT)',       tz: 'Asia/Singapore',                 short: 'SGT'  },
+  { label: 'Manila (PHT)',          tz: 'Asia/Manila',                    short: 'PHT'  },
+  { label: 'Hong Kong (HKT)',       tz: 'Asia/Hong_Kong',                 short: 'HKT'  },
+  { label: 'Shanghai (CST)',        tz: 'Asia/Shanghai',                  short: 'CST'  },
+  { label: 'Beijing (CST)',         tz: 'Asia/Shanghai',                  short: 'CST'  },
+  { label: 'Shenzhen (CST)',        tz: 'Asia/Shanghai',                  short: 'CST'  },
+  { label: 'Taipei (CST)',          tz: 'Asia/Taipei',                    short: 'CST'  },
+  { label: 'Seoul (KST)',           tz: 'Asia/Seoul',                     short: 'KST'  },
+  { label: 'Tokyo (JST)',           tz: 'Asia/Tokyo',                     short: 'JST'  },
+  { label: 'Osaka (JST)',           tz: 'Asia/Tokyo',                     short: 'JST'  },
+  // Oceania
+  { label: 'Sydney (AEST)',         tz: 'Australia/Sydney',               short: 'AEST' },
+  { label: 'Melbourne (AEST)',      tz: 'Australia/Melbourne',            short: 'AEST' },
+  { label: 'Brisbane (AEST)',       tz: 'Australia/Brisbane',             short: 'AEST' },
+  { label: 'Perth (AWST)',          tz: 'Australia/Perth',                short: 'AWST' },
+  { label: 'Auckland (NZST)',       tz: 'Pacific/Auckland',               short: 'NZST' },
 ];
 
-const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// ── Row state ──
+const localTz    = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const localMatch = TZ_OPTIONS.find(t => t.tz === localTz) || TZ_OPTIONS[0];
-
-let rows = [ { ...localMatch, isHome: true } ];
+let rows = [{ ...localMatch, isHome: true }];
 
 function saveRows() {
   try {
-    const toSave = rows.filter(r => !r.isHome).map(r => r.tz);
-    localStorage.setItem('worldtime_rows', JSON.stringify(toSave));
+    localStorage.setItem('worldtime_rows', JSON.stringify(
+      rows.filter(r => !r.isHome).map(r => r.tz)
+    ));
   } catch(e) {}
 }
 
@@ -691,140 +644,69 @@ function loadRows() {
         .map(tz => TZ_OPTIONS.find(t => t.tz === tz))
         .filter(Boolean)
         .filter(t => t.tz !== rows[0].tz);
-      if (extra.length > 0) { rows = [rows[0], ...extra.map(t => ({ ...t, isHome: false }))]; return; }
+      if (extra.length > 0) {
+        rows = [rows[0], ...extra.map(t => ({ ...t, isHome: false }))];
+        return;
+      }
     }
   } catch(e) {}
-  // No saved rows — add a sensible default that isn't the home timezone
-  const fallback = TZ_OPTIONS.find(t => t.tz !== rows[0].tz && t.short === 'PT')
-    || TZ_OPTIONS.find(t => t.tz !== rows[0].tz && t.short === 'ET')
-    || TZ_OPTIONS.find(t => t.tz !== rows[0].tz);
+  // No saved rows — add a sensible default
+  const fallback =
+    TZ_OPTIONS.find(t => t.tz !== rows[0].tz && t.short === 'PT') ||
+    TZ_OPTIONS.find(t => t.tz !== rows[0].tz && t.short === 'ET') ||
+    TZ_OPTIONS.find(t => t.tz !== rows[0].tz);
   if (fallback) rows.push({ ...fallback, isHome: false });
 }
 
 loadRows();
 
-// 47-step slider: center (23) = current hour, ±23 hours either side
-// Tape shows fixed 1AM→12AM sequence; NOW is anchored to current real hour
-const TOTAL_STEPS = 46;
-const NOW_STEP = 23;
+// ── Constants ──
+const NOW_STEP   = 23;
 const CELL_WIDTH = 48;
 
-// -- Searchable dropdown --
-let selectedTzIndex = 0;
-let isPointerInDropdown = false;
-const tzSearch = document.getElementById('tzSearch');
-const tzDropdown = document.getElementById('tzDropdown');
-
-function renderDropdown(filter) {
-  filter = filter || '';
-  tzDropdown.innerHTML = '';
-  const lf = filter.toLowerCase();
-  const filtered = TZ_OPTIONS.map((t, i) => ({ ...t, i })).filter(t =>
-    !filter || t.label.toLowerCase().includes(lf) || t.tz.toLowerCase().includes(lf) || t.short.toLowerCase().includes(lf)
-  );
-  if (!filtered.length) {
-    tzDropdown.innerHTML = '<div class="tz-option" style="opacity:0.4">No results</div>';
-    tzDropdown.classList.add('open');
-    return;
-  }
-  if (!filtered.find(t => t.i === selectedTzIndex)) selectedTzIndex = filtered[0].i;
-  filtered.forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'tz-option' + (t.i === selectedTzIndex ? ' active' : '');
-    div.textContent = t.label;
-    div.addEventListener('pointerdown', e => {
-      if (e.pointerType === 'touch') return; // let touch events handle it
-      e.preventDefault();
-      selectedTzIndex = t.i;
-      isPointerInDropdown = false;
-      tzDropdown.classList.remove('open');
-      tzSearch.setAttribute('aria-expanded', 'false');
-      confirmAdd();
-    });
-    // Touch-specific: use touchend so scrolling isn't blocked
-    let touchStartY = 0;
-    div.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
-    div.addEventListener('touchend', e => {
-      const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-      if (dy > 8) return; // was a scroll, not a tap
-      selectedTzIndex = t.i;
-      isPointerInDropdown = false;
-      tzDropdown.classList.remove('open');
-      tzSearch.setAttribute('aria-expanded', 'false');
-      confirmAdd();
-    }, { passive: true });
-    tzDropdown.appendChild(div);
-  });
-  positionDropdown();
-  tzDropdown.classList.add('open');
-}
-
-function positionDropdown() {
-  const inputRect = tzSearch.getBoundingClientRect();
-  const modal = document.querySelector('.modal');
-  const modalRect = modal.getBoundingClientRect();
-  const availableHeight = modalRect.bottom - inputRect.bottom - 16;
-  tzDropdown.style.top = inputRect.bottom + 'px';
-  tzDropdown.style.left = inputRect.left + 'px';
-  tzDropdown.style.width = inputRect.width + 'px';
-  tzDropdown.style.maxHeight = Math.max(80, availableHeight) + 'px';
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-tzSearch.addEventListener('focus', () => { tzSearch.setAttribute('aria-expanded', 'true'); renderDropdown(tzSearch.value); });
-tzSearch.addEventListener('input', () => renderDropdown(tzSearch.value));
-tzSearch.addEventListener('blur', () => {
-  if (!isPointerInDropdown) { tzDropdown.classList.remove('open'); tzSearch.setAttribute('aria-expanded', 'false'); }
-});
-tzDropdown.addEventListener('pointerenter', () => { isPointerInDropdown = true; });
-tzDropdown.addEventListener('pointerleave', () => { isPointerInDropdown = false; });
-tzDropdown.addEventListener('touchstart', () => { isPointerInDropdown = true; }, { passive: true });
-tzDropdown.addEventListener('touchend', () => { setTimeout(() => { isPointerInDropdown = false; }, 200); }, { passive: true });
-
+// ── Time utilities ──
 function getNowHour(tz) {
   const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', hour12: false }).formatToParts(new Date());
   return parseInt(parts.find(p => p.type === 'hour').value) % 24;
 }
+
 function getNowMinute(tz) {
   const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, minute: 'numeric' }).formatToParts(new Date());
   return parseInt(parts.find(p => p.type === 'minute').value);
 }
-function getTzOffsetFromHome(homeTz, targetTz) {
-  const now = new Date();
-  const homeDate = new Date(now.toLocaleString('en-US', { timeZone: homeTz }));
-  const targetDate = new Date(now.toLocaleString('en-US', { timeZone: targetTz }));
-  return Math.round((targetDate - homeDate) / 3600000);
+
+function getTzOffset(homeTz, targetTz) {
+  const now    = new Date();
+  const home   = new Date(now.toLocaleString('en-US', { timeZone: homeTz }));
+  const target = new Date(now.toLocaleString('en-US', { timeZone: targetTz }));
+  return Math.round((target - home) / 3600000);
 }
+
 function formatHour(h) {
   const h24 = ((h % 24) + 24) % 24;
   return { num: h24 % 12 || 12, ampm: h24 < 12 ? 'AM' : 'PM' };
 }
 
+// ── Tape builder ──
 function buildTape(row, isHome) {
   const homeNowHour = getNowHour(rows[0].tz);
-  const tzOffset = getTzOffsetFromHome(rows[0].tz, row.tz);
+  const tzOffset    = getTzOffset(rows[0].tz, row.tz);
   const tape = document.createElement('div');
   tape.className = 'tape';
 
   for (let i = 0; i <= 46; i++) {
-    const homeAbsHour = homeNowHour - NOW_STEP + i;       // home row absolute hour
-    const cellAbsHour = homeAbsHour + tzOffset;            // this row's absolute hour
+    const homeAbsHour = homeNowHour - NOW_STEP + i;
+    const cellAbsHour = homeAbsHour + tzOffset;
     const h = ((cellAbsHour) % 24 + 24) % 24;
     const { num, ampm } = formatHour(h);
-    const isWork = h >= 9 && h <= 17;
-
-    // Day delta: compare calendar day of this cell vs home row's same cell
-    const homeDayFloor = Math.floor(homeAbsHour / 24);
-    const cellDayFloor = Math.floor(cellAbsHour / 24);
-    const dayDelta = cellDayFloor - homeDayFloor;
-
-    const cell = document.createElement('div');
-    cell.className = 'hour-cell' + (isWork ? ' is-work' : '');
-
-    const dayLabel = (!isHome && dayDelta !== 0)
+    const isWork    = h >= 9 && h <= 17;
+    const dayDelta  = Math.floor(cellAbsHour / 24) - Math.floor(homeAbsHour / 24);
+    const dayLabel  = (!isHome && dayDelta !== 0)
       ? '<span class="day-marker">' + (dayDelta > 0 ? '+' + dayDelta : dayDelta) + '</span>'
       : '';
 
+    const cell = document.createElement('div');
+    cell.className = 'hour-cell' + (isWork ? ' is-work' : '');
     cell.innerHTML =
       '<span class="hour-num">' + num + '</span>' +
       '<span class="hour-ampm">' + ampm + dayLabel + '</span>';
@@ -833,22 +715,24 @@ function buildTape(row, isHome) {
   return tape;
 }
 
-function buildAmpmHeader() {
-  // PM label removed per design
-}
-
-let prevSliderVal = 23;
-
+// ── Render rows ──
 function render() {
   const container = document.getElementById('rowsContainer');
   container.innerHTML = '';
+
   rows.forEach((row, idx) => {
     const div = document.createElement('div');
     div.className = 'timezone-row';
+
     const labelWrap = document.createElement('div');
     labelWrap.className = 'tz-label tz-label-wrap';
     const parts = row.label.split('(');
-    labelWrap.innerHTML = '<div><span>' + row.label.split(' ')[0] + '</span><span class="tz-name">' + (parts[1] ? parts[1].replace(')', '') : row.short) + '</span></div>';
+    labelWrap.innerHTML =
+      '<div>' +
+        '<span>' + row.label.split(' ')[0] + '</span>' +
+        '<span class="tz-name">' + (parts[1] ? parts[1].replace(')', '') : row.short) + '</span>' +
+      '</div>';
+
     if (!row.isHome) {
       const delBtn = document.createElement('button');
       delBtn.className = 'del-btn';
@@ -856,20 +740,24 @@ function render() {
       delBtn.onclick = () => { rows.splice(idx, 1); saveRows(); render(); };
       labelWrap.appendChild(delBtn);
     }
+
     const track = document.createElement('div');
     track.className = 'tape-track';
     track.appendChild(buildTape(row, idx === 0));
+
     div.appendChild(labelWrap);
     div.appendChild(track);
     container.appendChild(div);
   });
-  buildAmpmHeader();
+
   requestAnimationFrame(updateTapes);
 }
 
+// ── Update tape positions and selection highlight ──
 function updateTapes() {
   const val = parseInt(document.getElementById('mainSlider').value);
   let boxLeft = 0;
+
   document.querySelectorAll('.tape-track').forEach(track => {
     const tape = track.querySelector('.tape');
     if (!tape) return;
@@ -881,38 +769,43 @@ function updateTapes() {
       cell.classList.toggle('is-current', i === val);
     });
   });
-  // Position selection box overlay
+
   const box = document.getElementById('selBox');
   if (box) {
-    box.style.left = boxLeft + 'px';
+    box.style.left    = boxLeft + 'px';
     box.style.display = 'block';
   }
+
   updateBadge();
 }
 
+// ── Time badge ──
 function updateBadge() {
-  const val = parseInt(document.getElementById('mainSlider').value);
+  const val       = parseInt(document.getElementById('mainSlider').value);
   if (!rows.length) return;
-  const offset = val - NOW_STEP;
-  const nowHour = getNowHour(rows[0].tz);
-  const nowMin = getNowMinute(rows[0].tz);
 
-  // Total minutes from now
-  const totalMins = nowHour * 60 + nowMin + offset * 60;
-  const totalHour = Math.floor(totalMins / 60);
-  const dispMin = offset === 0 ? nowMin : nowMin; // always show real minutes
-  const h = ((totalHour) % 24 + 24) % 24;
+  const offset     = val - NOW_STEP;
+  const nowHour    = getNowHour(rows[0].tz);
+  const nowMin     = getNowMinute(rows[0].tz);
+  const totalMins  = nowHour * 60 + nowMin + offset * 60;
+  const totalHour  = Math.floor(totalMins / 60);
+  const h          = ((totalHour) % 24 + 24) % 24;
   const { num, ampm } = formatHour(h);
-  const min = offset === 0 ? String(nowMin).padStart(2, '0') : '00';
-  const timeStr = num + ':' + min + ' ' + ampm;
-  const dayShift = Math.floor(totalMins / (24 * 60));
-  const dayStr = dayShift > 0 ? ' +' + dayShift : dayShift < 0 ? ' ' + dayShift : '';
+  const min        = offset === 0 ? String(nowMin).padStart(2, '0') : '00';
+  const timeStr    = num + ':' + min + ' ' + ampm;
+  const dayShift   = Math.floor(totalMins / (24 * 60));
+  const dayStr     = dayShift > 0 ? ' +' + dayShift : dayShift < 0 ? ' ' + dayShift : '';
+
   document.getElementById('selectedBadge').textContent = timeStr + dayStr;
-  const label = offset === 0 ? 'Now' : (offset > 0 ? '+' + offset + 'h (' + timeStr + ')' : offset + 'h (' + timeStr + ')');
-  document.getElementById('mainSlider').setAttribute('aria-valuetext', label);
+  document.getElementById('mainSlider').setAttribute('aria-valuetext',
+    offset === 0 ? 'Now' : offset + 'h (' + timeStr + ')'
+  );
 }
 
+// ── Slider ──
 const slider = document.getElementById('mainSlider');
+let prevSliderVal = NOW_STEP;
+
 slider.addEventListener('mousedown', initAudio);
 slider.addEventListener('touchstart', initAudio);
 slider.addEventListener('input', () => {
@@ -920,6 +813,22 @@ slider.addEventListener('input', () => {
   if (val !== prevSliderVal) { playClick(); prevSliderVal = val; }
   updateTapes();
 });
+
+// ── Modal ──
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  tzDropdown.classList.remove('open');
+}
+
+function confirmAdd() {
+  const tz = TZ_OPTIONS[selectedTzIndex];
+  if (tz && !rows.find(r => r.tz === tz.tz)) {
+    rows.push({ ...tz, isHome: false });
+    saveRows();
+    render();
+  }
+  closeModal();
+}
 
 document.getElementById('addTzBtn').addEventListener('click', () => {
   tzSearch.value = '';
@@ -929,21 +838,102 @@ document.getElementById('addTzBtn').addEventListener('click', () => {
   setTimeout(() => tzSearch.focus(), 50);
 });
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  tzDropdown.classList.remove('open');
-}
-
-function confirmAdd() {
-  const tz = TZ_OPTIONS[selectedTzIndex];
-  if (tz && !rows.find(r => r.tz === tz.tz)) { rows.push({ ...tz, isHome: false }); saveRows(); render(); }
-  closeModal();
-}
-
 document.getElementById('modalOverlay').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeModal();
 });
 
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── Searchable dropdown ──
+let selectedTzIndex    = 0;
+let isPointerInDropdown = false;
+const tzSearch   = document.getElementById('tzSearch');
+const tzDropdown = document.getElementById('tzDropdown');
+
+function renderDropdown(filter) {
+  filter = filter || '';
+  tzDropdown.innerHTML = '';
+  const lf = filter.toLowerCase();
+  const filtered = TZ_OPTIONS
+    .map((t, i) => ({ ...t, i }))
+    .filter(t => !filter ||
+      t.label.toLowerCase().includes(lf) ||
+      t.tz.toLowerCase().includes(lf) ||
+      t.short.toLowerCase().includes(lf)
+    );
+
+  if (!filtered.length) {
+    tzDropdown.innerHTML = '<div class="tz-option" style="opacity:0.4">No results</div>';
+    tzDropdown.classList.add('open');
+    return;
+  }
+
+  if (!filtered.find(t => t.i === selectedTzIndex)) selectedTzIndex = filtered[0].i;
+
+  filtered.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'tz-option' + (t.i === selectedTzIndex ? ' active' : '');
+    div.textContent = t.label;
+
+    // Desktop: select on pointerdown
+    div.addEventListener('pointerdown', e => {
+      if (e.pointerType === 'touch') return;
+      e.preventDefault();
+      selectedTzIndex = t.i;
+      isPointerInDropdown = false;
+      tzDropdown.classList.remove('open');
+      tzSearch.setAttribute('aria-expanded', 'false');
+      confirmAdd();
+    });
+
+    // Mobile: use touchend so scroll doesn't trigger selection
+    let touchStartY = 0;
+    div.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+    div.addEventListener('touchend', e => {
+      if (Math.abs(e.changedTouches[0].clientY - touchStartY) > 8) return;
+      selectedTzIndex = t.i;
+      isPointerInDropdown = false;
+      tzDropdown.classList.remove('open');
+      tzSearch.setAttribute('aria-expanded', 'false');
+      confirmAdd();
+    }, { passive: true });
+
+    tzDropdown.appendChild(div);
+  });
+
+  positionDropdown();
+  tzDropdown.classList.add('open');
+}
+
+function positionDropdown() {
+  const inputRect = tzSearch.getBoundingClientRect();
+  const modalRect = document.querySelector('.modal').getBoundingClientRect();
+  const available = modalRect.bottom - inputRect.bottom - 16;
+  tzDropdown.style.top       = inputRect.bottom + 'px';
+  tzDropdown.style.left      = inputRect.left + 'px';
+  tzDropdown.style.width     = inputRect.width + 'px';
+  tzDropdown.style.maxHeight = Math.max(80, available) + 'px';
+}
+
+tzSearch.addEventListener('focus', () => {
+  tzSearch.setAttribute('aria-expanded', 'true');
+  renderDropdown(tzSearch.value);
+});
+tzSearch.addEventListener('input', () => renderDropdown(tzSearch.value));
+tzSearch.addEventListener('blur', () => {
+  if (!isPointerInDropdown) {
+    tzDropdown.classList.remove('open');
+    tzSearch.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// Prevent blur from closing dropdown during touch scroll
+tzDropdown.addEventListener('pointerenter', () => { isPointerInDropdown = true; });
+tzDropdown.addEventListener('pointerleave', () => { isPointerInDropdown = false; });
+tzDropdown.addEventListener('touchstart',   () => { isPointerInDropdown = true; }, { passive: true });
+tzDropdown.addEventListener('touchend',     () => { setTimeout(() => { isPointerInDropdown = false; }, 200); }, { passive: true });
+
+// ── Init ──
 render();
 requestAnimationFrame(updateTapes);
 window.addEventListener('resize', updateTapes);
