@@ -4,7 +4,7 @@
 
 ## Overview
 
-Worldtime Table is that lets you compare multiple timezones using a draggable slider. We are committed to protecting your privacy. This policy explains what data the extension does and does not collect.
+Worldtime Table lets you compare multiple timezones using a draggable slider. We are committed to protecting your privacy. This policy explains what data the extension does and does not collect.
 
 ## Data Collection
 
