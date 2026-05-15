@@ -4,11 +4,11 @@
 
 ## Overview
 
-World Time Slider is a Chrome extension that lets you compare multiple timezones using a draggable slider. We are committed to protecting your privacy. This policy explains what data the extension does and does not collect.
+Worldtime Table is that lets you compare multiple timezones using a draggable slider. We are committed to protecting your privacy. This policy explains what data the extension does and does not collect.
 
 ## Data Collection
 
-**World Time Slider does not collect, store, transmit, or share any personal data.**
+**Worldtime Table does not collect, store, transmit, or share any personal data.**
 
 There are no user accounts, no analytics, no tracking, and no servers. The extension runs entirely in your browser.
 
