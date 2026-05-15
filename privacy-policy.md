@@ -1,4 +1,4 @@
-# Privacy Policy — World Time Slider
+# Privacy Policy — Worldtime Table
 
 **Last updated: May 2026**
 
